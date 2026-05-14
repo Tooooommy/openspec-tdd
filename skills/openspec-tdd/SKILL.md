@@ -96,15 +96,70 @@ version: 1.0.0
 
 ## 命令参考
 
-| 用户命令                            | 作用                               |
-| ----------------------------------- | ---------------------------------- |
-| `/openspec-tdd start [描述]`        | 启动完整流水线                     |
-| `/openspec-tdd continue`            | 从上次中断处继续                   |
-| `/openspec-tdd implement [task-id]` | 单独对某个任务执行 TDD（手动模式） |
-| `/openspec-tdd review`              | 仅执行架构审查                     |
-| `/openspec-tdd verify`              | 仅执行验证（不归档）               |
-| `/openspec-tdd finish`              | 执行最终验证并归档                 |
-| `/openspec-tdd status`              | 显示当前进度                       |
+| 用户命令                            | 作用                                   |
+| ----------------------------------- | -------------------------------------- |
+| `/openspec-tdd start [描述]`        | 启动完整 6 阶段流水线                  |
+| `/openspec-tdd continue`            | 从上次中断处继续（基于 tasks.md 标记） |
+| `/openspec-tdd implement [task-id]` | 跳过前期阶段，直接对指定任务执行 TDD   |
+| `/openspec-tdd review`              | 仅执行架构审查                         |
+| `/openspec-tdd verify`              | 仅执行验证（不归档）                   |
+| `/openspec-tdd finish`              | 执行最终验证并归档（跳过阶段4-5）      |
+| `/openspec-tdd status`              | 显示当前 change 进度                   |
+
+---
+
+## 命令详细说明
+
+### `/openspec-tdd start [描述]`
+
+- **作用**：启动完整 6 阶段流水线
+- **流程**：依次执行阶段1→2→3→4→5→6
+- **中断恢复**：若中途退出，下次使用 `/openspec-tdd continue` 继续
+
+### `/openspec-tdd continue`
+
+- **作用**：从上次中断处继续
+- **行为**：
+  1. 查找当前活跃的 change（基于最近修改的 `tasks.md` 或用户上次使用的 change）
+  2. 扫描 `tasks.md` 找到第一个 `[ ]` 任务
+  3. 从该任务继续执行阶段4（TDD 实施）
+  4. 若所有任务已完成，则进入阶段5（架构审查）
+
+### `/openspec-tdd implement [task-id]`
+
+- **作用**：跳过阶段1-3，直接对指定任务执行 TDD 循环
+- **前置条件**：存在活跃 change，且 `tasks.md` 中包含该任务 ID（未完成）
+- **流程**：
+  1. 确定当前 change（优先使用上次记录的 change，否则提示用户）
+  2. 读取 `tasks.md`，定位任务描述（任务行格式如 `- [ ] 3. 任务描述` 或 `3. [ ] 任务描述`）
+  3. 调用 `/tdd` 技能，传入任务描述
+  4. 等待 `/tdd` 完成
+  5. 在 `tasks.md` 中将该任务标记为 `[x]`
+  6. 提示用户是否继续下一个任务（可用 `/openspec-tdd continue`）
+
+### `/openspec-tdd review`
+
+- **作用**：单独执行阶段5（架构审查）
+- **流程**：调用 `/improve-codebase-architecture` 并输出报告
+
+### `/openspec-tdd verify`
+
+- **作用**：单独执行阶段6的验证部分（不归档）
+- **流程**：运行 `openspec validate --strict` 和测试套件（如 `npm test`）
+
+### `/openspec-tdd finish`
+
+- **作用**：跳过阶段4-5，直接执行阶段6（验证+归档）
+- **警告**：仅当所有任务已完成且测试通过时使用，否则可能导致归档不完整的规范
+
+### `/openspec-tdd status`
+
+- **作用**：显示当前进度
+- **输出**：
+  - 当前 change 名称
+  - 当前阶段（1-6）
+  - 任务完成比例（如 `3/5` 已完成）
+  - 最后一个完成的任务 ID（若有）
 
 ---
 
