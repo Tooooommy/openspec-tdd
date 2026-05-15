@@ -1,54 +1,54 @@
-# 架构审查检查清单
+# Architecture Review Checklist
 
-本清单供 `/improve-codebase-architecture` 技能在审查时参考，也可用于人工审查。
+This checklist serves as a reference for the `/improve-codebase-architecture` skill during review and can also be used for manual review.
 
-## 接口设计
+## Interface Design
 
-- [ ] 公开 API 是否清晰、自解释？
-- [ ] 是否依赖了内部实现细节？（例如导出私有类型）
-- [ ] 是否遵循接口隔离原则（不强迫调用方依赖不需要的方法）？
-- [ ] 输入输出是否有合理的验证和错误处理？
+- [ ] Are public APIs clear and self-explanatory?
+- [ ] Are there dependencies on internal implementation details? (e.g., exporting private types)
+- [ ] Does it follow the Interface Segregation Principle (not forcing callers to depend on unused methods)?
+- [ ] Are inputs and outputs properly validated with reasonable error handling?
 
-## 测试质量
+## Test Quality
 
-- [ ] 测试是否验证行为而非实现细节？
-- [ ] 是否有足够的边界条件测试（空值、异常输入）？
-- [ ] 是否有集成测试验证组件协作？
-- [ ] 测试是否独立、可重复、速度快？
+- [ ] Do tests verify behavior rather than implementation details?
+- [ ] Are there sufficient boundary condition tests (null values, invalid inputs)?
+- [ ] Are there integration tests verifying component collaboration?
+- [ ] Are tests independent, repeatable, and fast?
 
-## 覆盖率
+## Coverage
 
-- [ ] 核心业务逻辑覆盖率是否 ≥ 80%？
-- [ ] 错误处理分支是否被测试覆盖？
-- [ ] 是否有未覆盖的代码需要解释？
+- [ ] Is core business logic coverage ≥ 80%?
+- [ ] Are error handling branches covered by tests?
+- [ ] Is there uncovered code that needs explanation?
 
-## 架构一致性
+## Architecture Consistency
 
-- [ ] 实现是否遵循 `design.md` 中描述的结构？
-- [ ] 模块之间的依赖方向是否合理（无循环依赖）？
-- [ ] 是否有违反设计原则的地方（如单一职责、开闭原则）？
-- [ ] 是否有不必要的重复代码？
+- [ ] Does the implementation follow the structure described in `design.md`?
+- [ ] Are dependency directions between modules reasonable (no circular dependencies)?
+- [ ] Are there violations of design principles (e.g., Single Responsibility, Open/Closed)?
+- [ ] Is there unnecessary code duplication?
 
-## 可维护性
+## Maintainability
 
-- [ ] 命名是否一致、有意义？
-- [ ] 是否有足够的注释解释“为什么”，而非“怎么做”？
-- [ ] 配置、常量是否集中管理？
-- [ ] 是否引入了不必要的复杂性？
+- [ ] Is naming consistent and meaningful?
+- [ ] Are there sufficient comments explaining "why" rather than "how"?
+- [ ] Are configurations and constants centrally managed?
+- [ ] Has unnecessary complexity been introduced?
 
-## 安全性
+## Security
 
-- [ ] 输入是否经过验证和清理？
-- [ ] 敏感数据（密码、密钥）是否被正确保护（不记录日志、不明文存储）？
-- [ ] 是否有潜在的注入或权限绕过风险？
+- [ ] Are inputs validated and sanitized?
+- [ ] Is sensitive data (passwords, keys) properly protected (not logged, not stored in plaintext)?
+- [ ] Are there potential injection or privilege bypass risks?
 
-## 性能
+## Performance
 
-- [ ] 是否有明显的低效操作（N+1 查询、重复计算）？
-- [ ] 是否有必要的缓存或异步处理？
+- [ ] Are there obvious inefficient operations (N+1 queries, redundant computations)?
+- [ ] Is there necessary caching or async processing?
 
-## 问题分级
+## Issue Severity Levels
 
-- **关键**：必须修复才能进入下一阶段（如安全漏洞、严重设计缺陷）
-- **建议**：最好修复，但可暂时接受（如小范围重复代码、命名不一致）
-- **可选**：由开发者决定是否采纳（如风格偏好）
+- **Critical**: Must be fixed before proceeding to the next stage (e.g., security vulnerabilities, serious design flaws)
+- **Suggestion**: Should be fixed but can be temporarily accepted (e.g., minor code duplication, naming inconsistencies)
+- **Optional**: Left to the developer's discretion (e.g., style preferences)

@@ -1,0 +1,12 @@
+{
+  "tdd": {
+    "testCommand": "npm run test:ci",
+    "taskTimeMinutes": 8,
+    "reviewChecklistPath": "./skills/code-review/review-checklist.md"
+  },
+  "pipeline": {
+    "autoConfirm": false,
+    "requireCodeReview": true,
+    "requireArchReview": true
+  }
+}

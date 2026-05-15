@@ -1,65 +1,65 @@
-# TDD 实施细则
+# TDD Implementation Guidelines
 
-本文档为 `/tdd` 技能提供补充指导，确保其在 OpenSpec-TDD 流程中的行为一致且高质量。
+This document provides supplementary guidance for the `/tdd` skill to ensure consistent and high-quality behavior within the OpenSpec-TDD workflow.
 
-## 红-绿-重构的严格执行
+## Strict Red-Green-Refactor Enforcement
 
-在 OpenSpec-TDD 中，每个任务必须经历完整的 TDD 循环，**禁止**一次性实现多个任务。
+In OpenSpec-TDD, each task must go through a complete TDD cycle. **Do not** implement multiple tasks at once.
 
-### RED 阶段（写一个失败的测试）
+### RED Phase (Write a Failing Test)
 
-- 测试必须只**失败**，不能编译错误（除非语言限制）
-- 测试只验证当前任务的行为，不依赖未实现的其他任务
-- 测试通过**公共接口**（API、函数签名）进行，不测试私有方法
-- 使用项目的测试框架和断言库
+- The test must only **fail**, not produce a compilation error (unless language constraints apply)
+- The test only verifies the behavior of the current task, without depending on unimplemented tasks
+- Tests exercise the **public interface** (API, function signatures), not private methods
+- Use the project's test framework and assertion library
 
-### 验证 RED
+### Verify RED
 
-- 运行测试，确认它确实失败（红色）
-- 如果测试意外通过，说明需求已实现或测试有误，必须修改测试
+- Run the test and confirm it fails (red)
+- If the test unexpectedly passes, the requirement is already implemented or the test is flawed — the test must be revised
 
-### GREEN 阶段（写最少代码让测试通过）
+### GREEN Phase (Write Minimal Code to Pass)
 
-- 只写刚好让当前测试通过的代码
-- 允许硬编码、简单实现，不提前考虑扩展性
-- 不实现额外功能（YAGNI 原则）
+- Write only enough code to make the current test pass
+- Hardcoding and simple implementations are allowed; do not prematurely consider extensibility
+- Do not implement extra functionality (YAGNI principle)
 
-### 验证 GREEN
+### Verify GREEN
 
-- 运行所有测试（不仅当前测试），确认全部通过
-- 如果有其他测试失败，修复实现（可能违反了契约）
+- Run all tests (not just the current one) and confirm they all pass
+- If other tests fail, fix the implementation (a contract may have been violated)
 
-### REFACTOR 阶段（重构）
+### REFACTOR Phase (Refactor)
 
-- 在测试保护下改进代码结构：消除重复、提高可读性、提取常量/函数
-- 不改变外部行为（所有测试仍通过）
-- 可同时改进测试代码本身
+- Improve code structure under the protection of tests: eliminate duplication, improve readability, extract constants/functions
+- Do not change external behavior (all tests must still pass)
+- Test code itself may also be improved
 
-### 验证 REFACTOR
+### Verify REFACTOR
 
-- 再次运行所有测试，确保重构没有引入错误
+- Run all tests again to ensure the refactoring introduced no errors
 
-## 垂直切片 vs 水平分层
+## Vertical Slices vs. Horizontal Layers
 
-OpenSpec-TDD 推荐**垂直切片**方式：每个任务完成一个从接口到存储的完整小功能，而不是先完成所有数据层再完成所有业务层。
+OpenSpec-TDD recommends a **vertical slice** approach: each task completes a small, full feature from interface to storage, rather than completing all data layers first, then all business layers.
 
-示例（用户登录功能）：
+Example (user login feature):
 
-- ✅ 垂直：实现“邮箱格式验证”（从输入验证到返回错误信息）
-- ✅ 垂直：实现“密码哈希比对”（从获取请求到调用加密库）
-- ❌ 水平：先实现所有数据模型，再实现所有服务层
+- ✅ Vertical: Implement "email format validation" (from input validation to returning error messages)
+- ✅ Vertical: Implement "password hash comparison" (from receiving the request to calling the crypto library)
+- ❌ Horizontal: Implement all data models first, then all service layers
 
-## 测试命名规范
+## Test Naming Conventions
 
-- 测试名称应描述行为，而非实现：`test_email_validation_rejects_missing_at_symbol`
-- 使用 Given-When-Then 结构组织测试代码
+- Test names should describe behavior, not implementation: `test_email_validation_rejects_missing_at_symbol`
+- Use the Given-When-Then structure to organize test code
 
-## 常见反模式与纠正
+## Common Anti-Patterns and Corrections
 
-| 反模式         | 表现                         | 纠正方法                                   |
-| -------------- | ---------------------------- | ------------------------------------------ |
-| 跳过 RED       | 先写实现代码再补测试         | 删除实现代码，从 RED 开始                  |
-| 巨型 GREEN     | 一次性实现完整功能           | 拆分为多个 TDD 任务，逐个完成              |
-| 测试实现细节   | 测试私有方法或 mock 内部状态 | 重构测试，仅通过公共接口验证               |
-| 跳过重构       | 功能完成后不清理代码         | 强制在 GREEN 之后执行 REFACTOR             |
-| 依赖未实现任务 | 测试中 mock 了还不存在的模块 | 先实现被依赖的任务，或使用更简单的测试替身 |
+| Anti-Pattern               | Symptom                                       | Correction                                                  |
+| -------------------------- | --------------------------------------------- | ----------------------------------------------------------- |
+| Skipping RED               | Writing implementation code first, then tests | Delete implementation code, start from RED                  |
+| Mega GREEN                 | Implementing full functionality in one go     | Break into multiple TDD tasks, complete one by one          |
+| Testing Implementation     | Testing private methods or mocking internals  | Refactor tests to verify only via public interface          |
+| Skipping Refactor          | Not cleaning up code after functionality done | Enforce REFACTOR after GREEN                                |
+| Depending on Unimplemented | Tests mock modules that don't exist yet       | Implement the dependency first, or use simpler test doubles |

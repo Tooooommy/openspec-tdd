@@ -1,50 +1,59 @@
-# 质量门禁清单
+# Quality Gates Checklist
 
-本文件定义了 OpenSpec-TDD 流水线中每个阶段必须满足的出口条件。AI 必须在进入下一阶段前验证所有门禁。
+This document defines the exit conditions that must be met at each stage of the OpenSpec-TDD pipeline. The AI must verify all gates before proceeding to the next stage.
 
-## 阶段1：需求对齐出口条件
+## Stage 1: Requirements Alignment Exit Conditions
 
-- [ ] `/grill-me` 的所有问题都得到了明确回答
-- [ ] 所有歧义点已消除（无“可能”、“大概”等模糊词汇）
-- [ ] 用户已明确确认需求理解正确
-- [ ] `.scratch/openspec-tdd/requirements.md` 已生成且内容完整
+- [ ] All questions from `/grill-me` have been explicitly answered
+- [ ] All ambiguities have been resolved (no vague terms like "maybe", "probably")
+- [ ] The user has explicitly confirmed that the requirements are correctly understood
+- [ ] `.scratch/openspec-tdd/requirements.md` has been generated and is complete
 
-## 阶段2：规范生成出口条件
+## Stage 2: Spec Generation Exit Conditions
 
-- [ ] `proposal.md` 包含「背景」「目标」「范围」「约束」四个部分
-- [ ] 每个 `specs/*.md` 中的需求都使用 `### Requirement:` 标题
-- [ ] 每个需求至少包含一个 `#### Scenario:`，且场景使用 GIVEN/WHEN/THEN 格式
-- [ ] 每个场景使用 SHALL、MUST 等规范性关键词
-- [ ] `design.md` 包含架构选型、数据模型、异常处理、风险评估
-- [ ] `tasks.md` 已生成（即使粒度较粗）
-- [ ] `openspec validate --strict` 退出码为 0，无错误和警告
+- [ ] `proposal.md` contains all four sections: "Background", "Goals", "Scope", "Constraints"
+- [ ] Each requirement in `specs/*.md` uses the `### Requirement:` heading
+- [ ] Each requirement has at least one `#### Scenario:` using GIVEN/WHEN/THEN format
+- [ ] Each scenario uses normative keywords such as SHALL, MUST
+- [ ] `design.md` includes architecture decisions, data model, error handling, and risk assessment
+- [ ] `tasks.md` has been generated (even if coarse-grained)
+- [ ] `openspec validate --strict` exits with code 0, no errors or warnings
 
-## 阶段3：任务拆解出口条件
+## Stage 3: Task Breakdown Exit Conditions
 
-- [ ] 每个任务都可在 5–10 分钟内完成一个完整 TDD 循环
-- [ ] 任务之间无循环依赖
-- [ ] 每个任务有明确的“完成定义”（例如：测试通过、接口符合规范）
-- [ ] 用户已确认任务拆解合理
+- [ ] Each task can complete a full TDD cycle within 5–10 minutes
+- [ ] No circular dependencies between tasks
+- [ ] Each task has a clear "definition of done" (e.g., tests pass, interface conforms to spec)
+- [ ] The user has confirmed the task breakdown is reasonable
 
-## 阶段4：TDD 实施出口条件
+## Stage 4: TDD Implementation Exit Conditions
 
-- [ ] `tasks.md` 中所有任务都已标记 `[x]`
-- [ ] 所有测试（单元测试 + 集成测试）通过
-- [ ] 测试覆盖率（核心逻辑）≥ 80%（可由 `/improve-codebase-architecture` 后续检查）
-- [ ] 没有跳过 TDD 循环（即没有“先实现后补测试”的痕迹）
+- [ ] All tasks in `tasks.md` are marked `[x]`
+- [ ] All tests (unit + integration) pass
+- [ ] Test coverage (core logic) ≥ 80% (can be verified later by `/improve-codebase-architecture`)
+- [ ] No TDD cycles were skipped (i.e., no evidence of "implement first, test later")
 
-## 阶段5：架构审查出口条件
+## Stage 5: Code Review Exit Conditions
 
-- [ ] `/improve-codebase-architecture` 报告无“关键”级别问题
-- [ ] 所有“建议”级别问题已评估，明确接受或修复
-- [ ] 核心逻辑测试覆盖率 ≥ 80%
-- [ ] 接口设计不依赖于实现细节
-- [ ] 代码结构与 `design.md` 一致
+- [ ] `/code-review` report has no "Blocking" level issues
+- [ ] All "Warning" level issues have been evaluated, explicitly accepted or fixed
+- [ ] No hardcoded secrets, SQL injection, XSS, or path traversal vulnerabilities
+- [ ] New code has corresponding tests
+- [ ] Error handling covers critical paths
+- [ ] `.scratch/openspec-tdd/review-code-passed` flag exists
 
-## 阶段6：最终验证与归档出口条件
+## Stage 6: Architecture Review Exit Conditions
 
-- [ ] `openspec validate --strict` 再次通过
-- [ ] 完整测试套件（例如 `npm test`）退出码为 0
-- [ ] `openspec archive` 成功执行，无错误
-- [ ] 变更目录已从 `changes/` 移动到 `changes/archive/`
-- [ ] 主 `specs/` 目录已更新
+- [ ] `/improve-codebase-architecture` report has no "Critical" level issues
+- [ ] All "Suggestion" level issues have been evaluated, explicitly accepted or fixed
+- [ ] Core logic test coverage ≥ 80%
+- [ ] Interface design does not depend on implementation details
+- [ ] Code structure is consistent with `design.md`
+
+## Stage 7: Final Validation & Archive Exit Conditions
+
+- [ ] `openspec validate --strict` passes again
+- [ ] Full test suite (e.g., `npm test`) exits with code 0
+- [ ] `openspec archive` executes successfully with no errors
+- [ ] Change directory has been moved from `changes/` to `changes/archive/`
+- [ ] Main `specs/` directory has been updated
